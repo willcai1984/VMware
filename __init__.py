@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- 
 # Author: Will
 
-from AerohiveExpect import *
+from bin import *
 
 class VMware(object):
     def __init__(self):
