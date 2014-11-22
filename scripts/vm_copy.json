@@ -1,4 +1,6 @@
 {
-"vm":	{"name_list":"vm001,vm002,vm003",
-		"is_all":"false"}
+"vm":	{"folder_path":"/vmfs/volumes/datastore1/",
+		"src":"vm001",
+		"des_list":"vm003.vm005.vm007-vm009",
+		"is_poweron":"true"}
 }

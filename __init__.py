@@ -45,11 +45,11 @@ class VMware(object):
         self._exec(cli, head='COPY_VM')
         cli = 'cp -fr %s %s' % (src, des)
         self._exec(cli, timeout=1200, head='COPY_VM')
-        vmx_file = des + '/' + src + '.vmx'
-        vmx_file_save = des + '/' + src + '.vmx.save'
-        cli = 'cp -f %s %s' % (vmx_file, vmx_file_save)
+        vmx_file_s = des + '/' + src + '.vmx'
+        vmx_file_d = des + '/' + des + '.vmx'
+        cli = 'cp -f %s %s' % (vmx_file_s, vmx_file_d)
         self._exec(cli, head='COPY_VM')
-        cli = 'cat %s' % vmx_file
+        cli = 'cat %s' % vmx_file_d
         self._exec(cli, head='COPY_VM')
         copy_attribute = self.connect.before
         is_c_a = re.search(r'answer.msg.uuid.altered', copy_attribute)
@@ -58,12 +58,12 @@ class VMware(object):
         else:
             # add it
             info('''[COPY_VM]No answer attribute, add it''', self.connect.is_info)
-            cli = '''echo 'answer.msg.uuid.altered = "I copied it"' >> %s''' % vmx_file
+            cli = '''echo 'answer.msg.uuid.altered = "I copied it"' >> %s''' % vmx_file_d
             self._exec(cli, head='COPY_VM')
 
-    def sub_vm_para(self, file, ser_num, net_name):
-        file_path=os.path.split(file)[0]
-        file_folder=os.path.split(file_path)[1]
+    def sub_vm(self, vmx, ser_num, net_name):
+        file_path = os.path.split(file)[0]
+        file_folder = os.path.split(file_path)[1]
         serial_port_sub = '''telnet:\/\/:%s''' % ser_num
         eth1_network_sub = '''ethernet1.networkName = "%s"''' % net_name
         display_name_sub = '''displayName = "%s"''' % file_folder
@@ -71,22 +71,31 @@ class VMware(object):
                  -e 's/telnet:..:[0-9]\{1,5\}/%s/' \
                  -e 's/ethernet1.networkName = ".*"/%s/' \
                  -e 's/displayName.*".*"/%s/' \
-                 > %s''' % (file, serial_port_sub, eth1_network_sub, display_name_sub, file)
+                 > %s''' % (vmx, serial_port_sub, eth1_network_sub, display_name_sub, vmx)
         self._exec(cli, head='SUB_VM')
 
-    def del_vm(self, target_path):
-        cli = 'rm -r %s' % target_path
+    def del_vm(self, folder_path, folder_name):
+        cli = 'rm -fr %s' % (folder_path + '/' + folder_name)
         self._exec(cli, head='DEL_VM')
-        
-    def reg_vm(self, vmx_path):
+    
+    def del_vm_all(self, folder_path):
+        cli = 'cd %s;rm -fr *' % (folder_path)
+        self._exec(cli, head='DEL_VM')
+    
+    def reg_vm(self, folder_path, reg_name):
         # register the virtual machine as your display name
-        cli = 'vim-cmd solo/registervm %s' % (vmx_path)
+        cli = 'vim-cmd solo/registervm %s' % (folder_path + '/' + reg_name)
         self._exec(cli, head='REG_VM')
 
-    def unreg_vm(self, vmx_path):
+    def unreg_vm(self, folder_path, reg_name):
         # unregister the virtual
-        cli = 'vim-cmd vmsvc/unregister %s' % (vmx_path)
+        cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name)
         self._exec(cli, head='UNREG_VM')
+
+    def unreg_vm_all(self, folder_path):
+        reg_name_list = self._get_all_reg()
+        for reg_name in reg_name_list:
+            self.unreg_vm(folder_path, reg_name)
 
     def _is_vmid_exist(self, vmid):
         cli = 'vim-cmd vmsvc/getallvms'
@@ -104,6 +113,13 @@ class VMware(object):
         vmid_all = self.connect.before
         vmid_list = re.findall(r'\n(\d+)', vmid_all)
         return vmid_list
+
+    def _get_all_reg(self):
+        cli = 'vim-cmd vmsvc/getallvms'
+        self._exec(cli, head='ALL_REG')
+        reg_all = self.connect.before
+        reg_list = re.findall(r'\n\d+\s+\S+\s+\S+\s+(\S+)\s+', reg_all)
+        return reg_list
 
     def power_on_vm_via_vmid(self, vmid):
         if self._is_vmid_exist:
