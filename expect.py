@@ -3,7 +3,7 @@
 # Author: Will
 
 try:
-    import pexpect, sys, argparse, re, time
+    import pexpect, sys, re
 except ImportError, e:
     raise ImportError (str(e) + """A critical module was not found. Probably this operating system does not support it.""")
 
