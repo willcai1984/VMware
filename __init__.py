@@ -196,8 +196,7 @@ class VMware(object):
             info('''[%s]Meet Failed''', self.connect.is_info)
             info('''[%s]BEFORE = %s''' % (head, self.connect.child.before) , self.connect.is_info)
             info('''[%s]AFTER  = %s''' % (head, self.connect.child.after) , self.connect.is_info)
-            sleep(1)
-            self.connect.child.sendline('')
+            #expect prompt to eat buf
             self.connect.child.expect(self.connect.prompt)
         elif self.index == 3:
             info('''[%s]Execute CLI "%s"''' % (head, cli), self.connect.is_info)
