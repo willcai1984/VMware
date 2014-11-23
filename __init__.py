@@ -28,7 +28,7 @@ class VMware(object):
     def del_vswitch_all_portgroup(self, vswitch):
         cli = 'esxcli network vswitch standard portgroup list'
         self._exec(cli, head='DEL_ALLPG')
-        v_p = self.connect.before
+        v_p = self.connect.child.before
         # use /n instead of ^, ^ means begin of the file or variable, not lines
         v_p_list = re.findall(r'\n(\w+) +%s +\d+' % vswitch, v_p)
         for p in v_p_list:
@@ -55,7 +55,7 @@ class VMware(object):
         self._exec(cli, head='COPY_VM')
         cli = 'cat %s' % vmx_file_d
         self._exec(cli, head='COPY_VM')
-        copy_attribute = self.connect.before
+        copy_attribute = self.connect.child.before
         is_c_a = re.search(r'answer.msg.uuid.altered', copy_attribute)
         if is_c_a:
             info('''[COPY_VM]The answer attribute has been already configured, do nothing''', self.connect.is_info)
@@ -104,7 +104,7 @@ class VMware(object):
     def _is_vmid_exist(self, vmid):
         cli = 'vim-cmd vmsvc/getallvms'
         self._exec(cli, head='CHECK_VMID')
-        vmid_all = self.connect.before
+        vmid_all = self.connect.child.before
         vmid_list = re.findall(r'\n(\d+)', vmid_all)
         if vmid in vmid_list:
             return True
@@ -114,14 +114,14 @@ class VMware(object):
     def _get_all_vmid(self):
         cli = 'vim-cmd vmsvc/getallvms'
         self._exec(cli, head='ALL_VMID')
-        vmid_all = self.connect.before
+        vmid_all = self.connect.child.before
         vmid_list = re.findall(r'\n(\d+)', vmid_all)
         return vmid_list
 
     def _get_all_reg(self):
         cli = 'vim-cmd vmsvc/getallvms'
         self._exec(cli, head='ALL_REG')
-        reg_all = self.connect.before
+        reg_all = self.connect.child.before
         reg_list = re.findall(r'\n\d+\s+\S+\s+\S+\s+(\S+)\s+', reg_all)
         return reg_list
 
@@ -143,7 +143,7 @@ class VMware(object):
         # should add blank after %s such as "grep '%s ' ", because if we want to search xxx001, will shown all vmid(all file name is the same, such as 'VirtualOS_011/VirtualOS_001.vmx ')
         cli = "vim-cmd vmsvc/getallvms | grep '%s '" % vmname
         self._exec(cli, head='NAME2ID')
-        vmid_all = self.connect.before
+        vmid_all = self.connect.child.before
         vmid_list = re.findall(r'\n(\d+) ', vmid_all)
         if len(vmid_list) == 1:
             return vmid_list[0]
@@ -176,22 +176,22 @@ class VMware(object):
     def _exec(self, cli, timeout=60, head=''):
         self.connect.child.sendline(cli)
         exp_list = [pexpect.TIMEOUT, pexpect.EOF, '[Ff]ail', self.connect.prompt]
-        self.index = self.connect.expect(exp_list, timeout)
+        self.index = self.connect.child.expect(exp_list, timeout)
         if self.index == 0:
             info('''[%s]Meet Timeout''' % head, self.connect.is_info)
-            info('''[%s]BEFORE = %s''' % (head, self.connect.before) , self.connect.is_info)
-            info('''[%s]AFTER  = %s''' % (head, self.connect.after) , self.connect.is_info)
+            info('''[%s]BEFORE = %s''' % (head, self.connect.child.before) , self.connect.is_info)
+            info('''[%s]AFTER  = %s''' % (head, self.connect.child.after) , self.connect.is_info)
         elif self.index == 1: 
             info('''[%s]Meet EOF''', self.connect.is_info)
-            info('''[%s]BEFORE = %s''' % (head, self.connect.before) , self.connect.is_info)
-            info('''[%s]AFTER  = %s''' % (head, self.connect.after) , self.connect.is_info)
+            info('''[%s]BEFORE = %s''' % (head, self.connect.child.before) , self.connect.is_info)
+            info('''[%s]AFTER  = %s''' % (head, self.connect.child.after) , self.connect.is_info)
         elif self.index == 2:
             info('''[%s]Meet Failed''', self.connect.is_info)
-            info('''[%s]BEFORE = %s''' % (head, self.connect.before) , self.connect.is_info)
-            info('''[%s]AFTER  = %s''' % (head, self.connect.after) , self.connect.is_info)
+            info('''[%s]BEFORE = %s''' % (head, self.connect.child.before) , self.connect.is_info)
+            info('''[%s]AFTER  = %s''' % (head, self.connect.child.after) , self.connect.is_info)
         elif self.index == 3:
             info('''[%s]Execute CLI "%s"''' % (head, cli), self.connect.is_info)
         else:
             info('''[%s]Meet Failed''' % head, self.connect.is_info)
-            info('''[%s]BEFORE = %s''' % (head, self.connect.before) , self.connect.is_info)
-            info('''[%s]AFTER  = %s''' % (head, self.connect.after) , self.connect.is_info)
+            info('''[%s]BEFORE = %s''' % (head, self.connect.child.before) , self.connect.is_info)
+            info('''[%s]AFTER  = %s''' % (head, self.connect.child.after) , self.connect.is_info)
