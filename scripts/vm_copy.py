@@ -3,7 +3,7 @@
 # Author: Will
 
 from VMware import VMware
-from VMware.lib.unit import str2list
+from VMware.unit import str2list
 
 def vm_copy():
     vm = VMware()
