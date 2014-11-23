@@ -9,7 +9,7 @@ def vm_copy():
     vm = VMware()
     folder_path = vm.connect.value("vm.folder_path")
     src = vm.connect.value("vm.src")
-    des_list = str2list(vm.connect.value("vm.des_list"))
+    des_list = str2list(vm.connect.value("vm.des"))
     is_poweron = vm.connect.value("vm.is_poweron")
     for des in des_list:
         vm.copy_vm(folder_path, src, des)
