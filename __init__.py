@@ -42,19 +42,19 @@ class VMware(object):
         cli = '''esxcli network vswitch standard portgroup set --vlan-id %s -p %s''' % (vlan, portgroup_name)
         self._exec(cli, head='UNBIND_VLAN')
 
-    def copy_vm(self, folder_path, src, des):
+    def copy_vm(self, folder_path, src, dst):
         cli = 'cd %s' % folder_path
         self._exec(cli, head='COPY_VM')
-        cli = 'rm -r %s' % des
+        cli = 'rm -r %s' % dst
         self._exec(cli, head='COPY_VM')
-        cli = 'cp -fr %s %s' % (src, des)
+        cli = 'cp -fr %s %s' % (src, dst)
         self._exec(cli, timeout=1200, head='COPY_VM')
-        vmx_s= des + '/' + src + '.vmx'
-        vmx_d = des + '/' + des + '.vmx'
+        vmx_s= dst + '/' + src + '.vmx'
+        vmx_d = dst + '/' + dst + '.vmx'
         cli = 'cp -f %s %s' % (vmx_s, vmx_d)
         self._exec(cli, head='COPY_VM')
         #sub display name
-        display_name_sub = '''displayName = "%s"''' % des
+        display_name_sub = '''displayName = "%s"''' % dst
         cli = '''cat %s | sed \
                  -e 's/displayName.*".*"/%s/' \
                  > %s''' % (vmx_d, display_name_sub, vmx_d)
