@@ -3,7 +3,7 @@
 # Author: Will
 
 from VMware import VMware
-from VMware.bin.unit import str2list
+from VMware.lib.unit import str2list
 
 def vm_poweroff():
     vm= VMware()
