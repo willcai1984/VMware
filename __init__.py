@@ -54,6 +54,7 @@ class VMware(object):
         cli = 'cp -f %s %s' % (vmx_s, vmx_d)
         self._exec(cli, head='COPY_VM')
         #sub display name
+        #Cannot use cat v | ... >v, we should use cat v.bak | .. > v instead, else , we can get a null v, include nothing 
         display_name_sub = '''displayName = "%s"''' % dst
         cli = '''cat %s | sed \
                  -e 's/displayName.*".*"/%s/' \
