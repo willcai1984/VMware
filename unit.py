@@ -113,7 +113,7 @@ def str2list(list_str):
 '''
 Special cli process
 '''
-def generate_cli_mode_expect_timeout_wait_list(cli_list, prompt, timeout, wait, passwd='', sp=''):
+def generate_cli_mode_expect_timeout_wait_list(cli_list, prompt, timeout, wait, passwd=''):
     # define private parameters
     cli_mode_expect_timeout_wait_list = [] 
     reboot_timeout = 300
@@ -165,18 +165,6 @@ def generate_cli_mode_expect_timeout_wait_list(cli_list, prompt, timeout, wait, 
             cli_mode_expect_timeout_wait_list.append((cli, mode, 'update image.*', timeout, wait))
             cli_mode_expect_timeout_wait_list.append(('y', mode, prompt, save_img_timeout, wait))
             cli_mode_expect_timeout_wait_list.append(('', mode, 'login:.*', reboot_timeout, wait))
-        elif shell_regex.search(cli):
-            if sp:
-                cli_mode_expect_timeout_wait_list.append((cli, mode, '[Pp]assword|%s' % prompt, timeout, wait))
-                cli_mode_expect_timeout_wait_list.append((sp, mode, prompt, timeout, wait))
-            else:
-                cli_mode_expect_timeout_wait_list.append((cli, mode, prompt, timeout, wait))
-        elif exit_regex.search(cli):
-            if sp:
-                cli_mode_expect_timeout_wait_list.append((cli, mode, prompt, timeout, wait))                
-            else:
-                cli_mode_expect_timeout_wait_list.append(('save config', mode, prompt, timeout, wait))
-                cli_mode_expect_timeout_wait_list.append((cli, mode, 'login:.*|%s' % prompt, timeout, wait))  
         elif enble_regex.search(cli):
             cli_mode_expect_timeout_wait_list.append((cli, mode, '[Pp]assword.*', timeout, wait))
             cli_mode_expect_timeout_wait_list.append((passwd, mode, prompt, timeout, wait))             

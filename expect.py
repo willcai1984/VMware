@@ -307,7 +307,7 @@ class Expect(object):
             with open(self.config_file) as f_o:
                 f_r_list = f_o.readlines()
             self.exec_cli_list.extend(f_r_list)
-        self.c_m_e_t_w_list = generate_cli_mode_expect_timeout_wait_list(self.exec_cli_list, self.prompt, self.timeout, self.wait, self.passwd, self.sp)
+        self.c_m_e_t_w_list = generate_cli_mode_expect_timeout_wait_list(self.exec_cli_list, self.prompt, self.timeout, self.wait, self.passwd)
 
 
     def _logfile_init(self):
