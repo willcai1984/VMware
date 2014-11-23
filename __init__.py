@@ -49,11 +49,17 @@ class VMware(object):
         self._exec(cli, head='COPY_VM')
         cli = 'cp -fr %s %s' % (src, des)
         self._exec(cli, timeout=1200, head='COPY_VM')
-        vmx_file_s = des + '/' + src + '.vmx'
-        vmx_file_d = des + '/' + des + '.vmx'
-        cli = 'cp -f %s %s' % (vmx_file_s, vmx_file_d)
+        vmx_s= des + '/' + src + '.vmx'
+        vmx_d = des + '/' + des + '.vmx'
+        cli = 'cp -f %s %s' % (vmx_s, vmx_d)
         self._exec(cli, head='COPY_VM')
-        cli = 'cat %s' % vmx_file_d
+        #sub display name
+        display_name_sub = '''displayName = "%s"''' % des
+        cli = '''cat %s | sed \
+                 -e 's/displayName.*".*"/%s/' \
+                 > %s''' % (vmx_d, display_name_sub, vmx_d)
+        self._exec(cli, head='COPY_VM')
+        cli = 'cat %s' % vmx_d
         self._exec(cli, head='COPY_VM')
         copy_attribute = self.connect.child.before
         is_c_a = re.search(r'answer.msg.uuid.altered', copy_attribute)
@@ -62,7 +68,7 @@ class VMware(object):
         else:
             # add it
             info('''[COPY_VM]No answer attribute, add it''', self.connect.is_info)
-            cli = '''echo 'answer.msg.uuid.altered = "I copied it"' >> %s''' % vmx_file_d
+            cli = '''echo 'answer.msg.uuid.altered = "I copied it"' >> %s''' % vmx_d
             self._exec(cli, head='COPY_VM')
 
     def sub_vm(self, vmx, ser_num, net_name):
