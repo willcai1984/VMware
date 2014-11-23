@@ -163,7 +163,7 @@ class VMware(object):
         if vmid:
             self.power_on_vm_via_vmid(vmid)
 
-    def power_off_vm_via_vmname(self, vmname, spawn_child):
+    def power_off_vm_via_vmname(self, vmname):
         vmid = self.vmname2vmid(vmname)
         if vmid:
             self.power_off_vm_via_vmid(vmid)
