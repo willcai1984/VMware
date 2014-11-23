@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- 
 # Author: Will
 import os
-from bin import *
+from VMware.bin import *
 
 class VMware(object):
     def __init__(self):
