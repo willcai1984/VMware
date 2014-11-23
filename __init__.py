@@ -174,7 +174,7 @@ class VMware(object):
             self.power_off_vm_via_vmid(vmid)
 
     def _exec(self, cli, timeout=60, head=''):
-        self.connect.sendline(cli)
+        self.connect.child.sendline(cli)
         exp_list = [pexpect.TIMEOUT, pexpect.EOF, '[Ff]ail', self.connect.prompt]
         self.index = self.connect.expect(exp_list, timeout)
         if self.index == 0:
