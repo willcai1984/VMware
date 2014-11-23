@@ -73,16 +73,16 @@ class VMware(object):
             self._exec(cli, head='COPY_VM')
 
     def sub_vm(self, vmx, ser_num, net_name):
-        file_path = os.path.split(file)[0]
-        file_folder = os.path.split(file_path)[1]
+        vmx_s=vmx
+        vmx_b=vmx+'.bak'
+        cli = 'cp -f %s %s' % (vmx_s, vmx_b)
+        self._exec(cli, head='COPY_VM')
         serial_port_sub = '''telnet:\/\/:%s''' % ser_num
         eth1_network_sub = '''ethernet1.networkName = "%s"''' % net_name
-        display_name_sub = '''displayName = "%s"''' % file_folder
         cli = '''cat %s | sed \
                  -e 's/telnet:..:[0-9]\{1,5\}/%s/' \
                  -e 's/ethernet1.networkName = ".*"/%s/' \
-                 -e 's/displayName.*".*"/%s/' \
-                 > %s''' % (vmx, serial_port_sub, eth1_network_sub, display_name_sub, vmx)
+                 > %s''' % (vmx_b, serial_port_sub, eth1_network_sub, vmx_s)
         self._exec(cli, head='SUB_VM')
 
     def del_vm(self, folder_path, folder_name):
