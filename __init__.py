@@ -45,7 +45,7 @@ class VMware(object):
     def copy_vm(self, folder_path, src, dst):
         cli = 'cd %s' % folder_path
         self._exec(cli, head='COPY_VM')
-        cli = 'rm -r %s' % dst
+        cli = 'rm -fr %s' % dst
         self._exec(cli, head='COPY_VM')
         cli = 'cp -fr %s %s' % (src, dst)
         self._exec(cli, timeout=1200, head='COPY_VM')
@@ -57,7 +57,7 @@ class VMware(object):
         display_name_sub = '''displayName = "%s"''' % dst
         cli = '''cat %s | sed \
                  -e 's/displayName.*".*"/%s/' \
-                 > %s''' % (vmx_d, display_name_sub, vmx_d)
+                 > %s''' % (vmx_s, display_name_sub, vmx_d)
         self._exec(cli, head='COPY_VM')
         cli = 'cat %s' % vmx_d
         self._exec(cli, head='COPY_VM')
