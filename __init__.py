@@ -1,8 +1,12 @@
 ﻿  #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 # Author: Will
-import os
-from VMware.lib import *
+try:
+    import pexpect, re, os
+except ImportError, e:
+    raise ImportError (str(e) + """A critical module was not found. Probably this operating system does not support it.""")
+from VMware.lib import ExpectConnect
+from VMware.lib.unit import sleep, debug, info, warn, error
 
 class VMware(object):
     def __init__(self):
