@@ -94,7 +94,7 @@ class VMware(object):
                      -e 's/ethernet0.networkName = ".*"/%s/' \
                      > %s''' % (vmx_b, ser_num_sub, eth0_net_sub  , vmx_s)
             self._exec(cli, head='SUB_VM')
-        if sernum:
+        if eth1net:
             cli = 'cp -f %s %s' % (vmx_s, vmx_b)
             self._exec(cli, head='COPY_VM')
 
