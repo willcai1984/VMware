@@ -37,12 +37,12 @@ class VMware(object):
         for p in v_p_list:
             self.del_vswitch_portgroup(vswitch, p)
     
-    def bind_portgroup_vlan(self, portgroup_name, vlan):
-        cli = '''esxcli network vswitch standard portgroup set -p %s --vlan-id %s''' % (portgroup_name, vlan)
+    def bind_portgroup_vlan(self, portgroup, vlan):
+        cli = '''esxcli network vswitch standard portgroup set -p %s --vlan-id %s''' % (portgroup, vlan)
         self._exec(cli, head='BIND_VLAN')
 
-    def unbind_portgroup_vlan(self, portgroup_name, vlan):
-        cli = '''esxcli network vswitch standard portgroup set --vlan-id %s -p %s''' % (vlan, portgroup_name)
+    def unbind_portgroup_vlan(self, portgroup, vlan):
+        cli = '''esxcli network vswitch standard portgroup set --vlan-id %s -p %s''' % (vlan, portgroup)
         self._exec(cli, head='UNBIND_VLAN')
 
     def copy_vm(self, folder_path, src, dst):
