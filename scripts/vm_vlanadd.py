@@ -15,5 +15,6 @@ def vm_vlanadd():
         vm.add_vswitch_portgroup(vswitch, vlan)
         vlan_id = int(int_reg.search(vlan).group())
         vm.bind_portgroup_vlan(vlan, vlan_id)
+        
 if __name__ == '__main__':
     vm_vlanadd()
