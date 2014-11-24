@@ -8,7 +8,7 @@ from VMware.unit import str2list
 def vm_del():
     vm = VMware()
     folder_path = vm.connect.value("vm.folder_path")
-    name_list = str2list(vm.connect.value("vm.name_list"))
+    name_list = str2list(vm.connect.value("vm.name"))
     is_all = vm.connect.value("vm.is_all")
     if is_all == "true":
         vm.power_off_vm_all()
