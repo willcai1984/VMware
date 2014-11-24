@@ -52,7 +52,7 @@ class VMware(object):
         self._exec(cli, head='COPY_VM')
         cli = 'cp -fr %s %s' % (src, dst)
         self._exec(cli, timeout=1200, head='COPY_VM')
-        vmx_s= dst + '/' + src + '.vmx'
+        vmx_s = dst + '/' + src + '.vmx'
         vmx_d = dst + '/' + dst + '.vmx'
         cli = 'cp -f %s %s' % (vmx_s, vmx_d)
         self._exec(cli, head='COPY_VM')
@@ -75,21 +75,38 @@ class VMware(object):
             cli = '''echo 'answer.msg.uuid.altered = "I copied it"' >> %s''' % vmx_d
             self._exec(cli, head='COPY_VM')
 
-    def sub_vm(self, vmx, ser_num, net_name):
-        vmx_s=vmx
-        vmx_b=vmx+'.bak'
-        cli = 'cp -f %s %s' % (vmx_s, vmx_b)
-        self._exec(cli, head='COPY_VM')
-        serial_port_sub = '''telnet:\/\/:%s''' % ser_num
-        eth1_network_sub = '''ethernet1.networkName = "%s"''' % net_name
-        cli = '''cat %s | sed \
-                 -e 's/telnet:..:[0-9]\{1,5\}/%s/' \
-                 -e 's/ethernet1.networkName = ".*"/%s/' \
-                 > %s''' % (vmx_b, serial_port_sub, eth1_network_sub, vmx_s)
-        self._exec(cli, head='SUB_VM')
+    def sub_vm(self, vmx, sernum='', eth0net='', eth1net=''):
+        vmx_s = vmx
+        vmx_b = vmx + '.bak'
+        if sernum:
+            cli = 'cp -f %s %s' % (vmx_s, vmx_b)
+            self._exec(cli, head='COPY_VM')
+            ser_num_sub = '''telnet:\/\/:%s''' % sernum
+            cli = '''cat %s | sed \
+                     -e 's/telnet:..:[0-9]\{1,5\}/%s/' \
+                     > %s''' % (vmx_b, ser_num_sub, vmx_s)
+            self._exec(cli, head='SUB_VM')
+        if eth0net:
+            cli = 'cp -f %s %s' % (vmx_s, vmx_b)
+            self._exec(cli, head='COPY_VM')
+            eth0_net_sub = '''ethernet0.networkName = "%s"''' % eth0net
+            cli = '''cat %s | sed \
+                     -e 's/ethernet0.networkName = ".*"/%s/' \
+                     > %s''' % (vmx_b, ser_num_sub, eth0_net_sub  , vmx_s)
+            self._exec(cli, head='SUB_VM')
+        if sernum:
+            cli = 'cp -f %s %s' % (vmx_s, vmx_b)
+            self._exec(cli, head='COPY_VM')
+
+            eth1_net_sub = '''ethernet1.networkName = "%s"''' % eth1net
+            cli = '''cat %s | sed \
+                     -e 's/ethernet1.networkName = ".*"/%s/' \
+                     > %s''' % (vmx_b, eth1_net_sub , vmx_s)
+            self._exec(cli, head='SUB_VM')
+
 
     def del_vm(self, folder_path, folder_name):
-        cli = 'rm -fr %s' % (folder_path + '/' + folder_name).replace('//','/')
+        cli = 'rm -fr %s' % (folder_path + '/' + folder_name).replace('//', '/')
         self._exec(cli, head='DEL_VM')
     
     def del_vm_all(self, folder_path):
@@ -98,12 +115,12 @@ class VMware(object):
     
     def reg_vm(self, folder_path, reg_name):
         # register the virtual machine as your display name
-        cli = 'vim-cmd solo/registervm %s' % (folder_path + '/' + reg_name).replace('//','/')
+        cli = 'vim-cmd solo/registervm %s' % (folder_path + '/' + reg_name).replace('//', '/')
         self._exec(cli, head='REG_VM')
 
     def unreg_vm(self, folder_path, reg_name):
         # unregister the virtual
-        cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name).replace('//','/')
+        cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name).replace('//', '/')
         self._exec(cli, head='UNREG_VM')
 
     def unreg_vm_all(self, folder_path):

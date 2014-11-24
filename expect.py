@@ -61,7 +61,6 @@ class Expect(object):
         s.append('Debug_level = %s' % self.debug_level)
         return '\n'.join(s)
 
-
     def ssh_login(self):
         info('''[LOGIN-SSH]Send cli to login target''', self.is_info)
         self._retry_not_expect('ssh %s@%s' % (self.user, self.ip) , 'sendline', [pexpect.TIMEOUT, 'Connection timed out|No route to host.*', 'continue connecting .*\?', '[Pp]assword:', self.prompt])
@@ -100,6 +99,51 @@ class Expect(object):
             info('''[LOGIN-SSH]Cannot match any option in expect list''', self.is_info)
             self.is_error = True
             info('''[LOGIN-SSH]From 'SSH CMD' jump to is_error, Unknow error''', self.is_info)
+        self._basic_login()
+
+    def telnet_login(self):
+        info('''[LOGIN-TELNET]Send cli to login target''', self.is_info)
+        self._retry_not_expect('telnet %s %s' % (self.ip, self.port) , 'sendline', [pexpect.TIMEOUT, 'No route to host.*', 'Unable .* Connection refused.*', 'Escape character is.*'])
+        if self.log_file == 'stdout':
+            self.child.logfile_read = sys.stdout
+        else:
+            self.child.logfile_read = self.f_o
+        
+        # maybe we can add retry in index 0 and 1
+        if self.exec_index == 0:
+            self.is_error = True
+            info('''[LOGIN-TELNET]From 'TELNET CMD' jump to is_error, Timeout''', self.is_info)
+        elif self.exec_index == 1:
+            self.is_error = True
+            info('''[LOGIN-TELNET]From 'TELNET CMD' jump to is_error, NoRoute''', self.is_info)
+        elif self.exec_index == 2:
+            self.is_error = True
+            info('''[LOGIN-TELNET]From 'TELNET CMD' jump to is_error, ConnectRefused''', self.is_info)
+        elif self.exec_index == 3:
+            info('''[LOGIN-TELNET]Send 'TELNET CMD' successfully, meet Escape''', self.is_info)
+            self._retry_not_expect('' , 'sendline', [pexpect.TIMEOUT, pexpect.EOF, 'login.*', '[Pp]assword.*', 'yes\|no>:.*', self.prompt])
+            if self.exec_index == 0:
+                self.is_error = True
+                info('''[LOGIN-TELNET]From 'Enter' jump to is_error, Timeout''', self.is_info)
+            elif self.exec_index == 1:
+                self.is_error = True
+                info('''[LOGIN-TELNET]From 'Enter' jump to is_error, VMOSInActive''', self.is_info)
+            elif self.exec_index == 2:
+                self.is_user = True
+                info('''[LOGIN-TELNET]From 'Enter' jump to is_user''', self.is_info)
+            elif self.exec_index == 3:
+                self.is_passwd = True
+                info('''[LOGIN-TELNET]From 'Enter' jump to is_passwd''', self.is_info)
+            elif self.exec_index == 4:
+                self.is_no = True
+                info('''[LOGIN-TELNET]From 'Enter' jump to is_no''', self.is_info)
+            elif self.exec_index == 5:
+                self.is_prompt = True
+                info('''[LOGIN-TELNET]From 'Enter' jump to is_prompt''', self.is_info)
+        else:
+            info('''[LOGIN-TELNET]Cannot match any option in expect list''', self.is_info)
+            self.is_error = True
+            info('''[LOGIN-TELNET]From 'TELNET CMD' jump to is_error, Unknow error''', self.is_info)
         self._basic_login()
 
     def _basic_login(self):

@@ -1,4 +1,11 @@
 {
-"vm":	{"name_list":"vm001,vm003-vm005,vm007",
-		"is_all":"false"}
+"vm":	{"folder_path":"/vmfs/volumes/datastore1/",
+		"name":"vm001,vm003-vm005,vm007",
+		"is_serial":"false",
+		"serial":"2001,2003-2005,2007",
+		"is_eth0":"false",
+		"eth0":"vlan001,vlan003-vlan005,vlan007",
+		"is_eth1":"false",
+		"eth1":"vlan001,vlan003-vlan005,vlan007"
+		}
 }
