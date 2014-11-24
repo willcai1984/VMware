@@ -32,6 +32,7 @@ def vm_sub():
                 eth1_list = [eth1_list[0]] * len(name_list)
             eth1 = eth1_list[name_list.index(name)]
             vm.sub_vm(vmx, eth1net=eth1)
+#Need power off and on to active the modify
 
 if __name__ == '__main__':
     vm_sub()

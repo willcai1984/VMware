@@ -97,7 +97,6 @@ class VMware(object):
         if eth1net:
             cli = 'cp -f %s %s' % (vmx_s, vmx_b)
             self._exec(cli, head='COPY_VM')
-
             eth1_net_sub = '''ethernet1.networkName = "%s"''' % eth1net
             cli = '''cat %s | sed \
                      -e 's/ethernet1.networkName = ".*"/%s/' \
