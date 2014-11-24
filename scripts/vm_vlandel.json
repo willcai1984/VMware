@@ -1,0 +1,5 @@
+{
+"vm":	{"vlan":"vlan001,vlan003-vlan005,vlan007",
+		"vswitch":"vSwitch2"
+		}
+}
