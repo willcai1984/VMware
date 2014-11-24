@@ -11,7 +11,10 @@ from unit import sleep, debug, info, warn, error
 class VMware(object):
     def __init__(self):
         self.connect = Expect()
-        self.connect.ssh_login()
+        if self.connect.mode == 'ssh':
+            self.connect.ssh_login()
+        elif self.connect.mode == 'telnet':
+            self.connect.telnet_login()
 
     def __del__(self):
         self.connect.basic_logout()

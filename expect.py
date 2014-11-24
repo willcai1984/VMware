@@ -13,7 +13,9 @@ from unit import sleep, debug, info, warn, error, str2list, generate_cli_mode_ex
 class Expect(object):
     def __init__(self):
         self.args = ExpectArgs()
+        self.mode = self.args.mode
         self.ip = self.args.ip
+        self.port = self.args.port
         self.user = self.args.user
         self.passwd = self.args.passwd
         self.prompt = self.args.prompt
@@ -29,6 +31,7 @@ class Expect(object):
         self._debug()
         self._tag()
         self._cli()
+        self._port()
         self._logfile_init()
         # use str(self) to print __str__ value
         info('Expect Args\n' + str(self), self.is_info)
@@ -41,7 +44,9 @@ class Expect(object):
 
     def __str__(self):
         s = []
+        s.append('Mode        = %s' % self.mode)
         s.append('IP          = %s' % self.ip)
+        s.append('Port        = %s' % self.ip)
         s.append('User        = %s' % self.user)
         s.append('Passwd      = %s' % self.passwd)
         s.append('Prompt      = %s' % self.prompt)
@@ -309,6 +314,14 @@ class Expect(object):
             self.exec_cli_list.extend(f_r_list)
         self.c_m_e_t_w_list = generate_cli_mode_expect_timeout_wait_list(self.exec_cli_list, self.prompt, self.timeout, self.wait, self.passwd)
 
+    def _port(self):
+        # Due to the port can be used for either ssh or telnet, we should set its default value here
+        # If you have set the value, it is no influnce here
+        if self.port == -1:
+            if self.mode == 'ssh':
+                self.port = 22
+            elif self.mode == 'telnet':
+                self.port = 23
 
     def _logfile_init(self):
         self.f_o = None

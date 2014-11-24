@@ -11,9 +11,15 @@ from unit import get_default_data_file, josn_process
 class ExpectArgs(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser(description='Login target and execute cmds')
-        
+
+        self.parser.add_argument('-m', '--mode', required=False, default='ssh' , choices=['ssh', 'telnet'], dest='mode',
+                            help='Login mode')
+
         self.parser.add_argument('-i', '--ip', required=True, default=None, dest='ip',
                             help='Target IP')
+
+        self.parser.add_argument('--port', required=False, default= -1, type=int, dest='port',
+                            help='Taget port')
 
         self.parser.add_argument('-u', '--user', required=False, default='root', dest='user',
                             help='Login Name')
@@ -44,6 +50,9 @@ class ExpectArgs(object):
         
         self.parser.add_argument('-d', '--data-file', required=False, default=get_default_data_file(), dest='data_file',
                                  help='data file (should be encoded in utf-8), default is "[dir of test file]/[name of test file].json"')
+
+        self.parser.add_argument('-sp', '--shellpasswd', required=False, default='', dest='sp',
+                            help='Shell password for enter to shell mode')
         
         self.parser.add_argument('--parameters', required=False, default=None, nargs='*', dest='parameters',
                                  help='parameters from command line have higher priority than which specified in data file')
@@ -58,7 +67,9 @@ class ExpectArgs(object):
 
     def _parse_args(self):
         self.args = self.parser.parse_args()
+        self.mode = self.args.mode
         self.ip = self.args.ip
+        self.port = self.args.port
         self.user = self.args.user
         self.passwd = self.args.passwd
         self.prompt = self.args.prompt
@@ -70,6 +81,7 @@ class ExpectArgs(object):
         self.retry = self.args.retry
         self.data_file = self.args.data_file
         self.parameters = self.args.parameters
+        self.sp = self.args.sp
         self.debug_level = self.args.debug_level
 
     def _datafile_process(self):
