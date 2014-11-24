@@ -63,7 +63,7 @@ class Expect(object):
 
     def ssh_login(self):
         info('''[LOGIN-SSH]Send cli to login target''', self.is_info)
-        self._retry_not_expect('ssh %s@%s' % (self.user, self.ip) , 'sendline', [pexpect.TIMEOUT, 'Connection timed out|No route to host.*', 'continue connecting .*\?', '[Pp]assword:', self.prompt])
+        self._retry_not_expect('ssh %s@%s -p %s' % (self.user, self.ip, self.port) , 'sendline', [pexpect.TIMEOUT, 'Connection timed out|No route to host.*', 'continue connecting .*\?', '[Pp]assword:', self.prompt])
         if self.log_file == 'stdout':
             self.child.logfile_read = sys.stdout
         else:
