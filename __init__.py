@@ -86,7 +86,7 @@ class VMware(object):
         self._exec(cli, head='SUB_VM')
 
     def del_vm(self, folder_path, folder_name):
-        cli = 'rm -fr %s' % (folder_path + '/' + folder_name)
+        cli = 'rm -fr %s' % (folder_path + '/' + folder_name).replace('//','/')
         self._exec(cli, head='DEL_VM')
     
     def del_vm_all(self, folder_path):
@@ -95,12 +95,12 @@ class VMware(object):
     
     def reg_vm(self, folder_path, reg_name):
         # register the virtual machine as your display name
-        cli = 'vim-cmd solo/registervm %s' % (folder_path + '/' + reg_name)
+        cli = 'vim-cmd solo/registervm %s' % (folder_path + '/' + reg_name).replace('//','/')
         self._exec(cli, head='REG_VM')
 
     def unreg_vm(self, folder_path, reg_name):
         # unregister the virtual
-        cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name)
+        cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name).replace('//','/')
         self._exec(cli, head='UNREG_VM')
 
     def unreg_vm_all(self, folder_path):
