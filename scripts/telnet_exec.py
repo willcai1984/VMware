@@ -9,6 +9,7 @@ def telnet_exec():
     connect = Expect()
     ser_list = str2list(connect.value("vm.serial"))
     for ser in ser_list:
+        connect = Expect()
         connect.port = ser
         connect.telnet_login()
         connect.basic_exec()
