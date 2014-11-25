@@ -1,7 +1,7 @@
 ﻿  #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 # Author: Will
-
+import os
 from VMware.unit import str2list
 from VMware.expect import Expect
 
@@ -11,6 +11,7 @@ def telnet_exec():
     user = connect.value("vm.user")
     passwd = connect.value("vm.passwd")
     prompt = connect.value("vm.prompt")
+    os.system('''echo ''>%s''' % connect.log_file)
     for ser in ser_list:
         connect = Expect()
         connect.port = ser
