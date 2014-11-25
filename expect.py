@@ -370,7 +370,8 @@ class Expect(object):
     def _logfile_init(self):
         self.f_o = None
         if self.log_file != 'stdout':
-            self.f_o = open(self.log_file, mode='w')
+            #Modify mode from w to a for loop telnet control's file log
+            self.f_o = open(self.log_file, mode='a')
 
     def _logfile_process(self):
         if self.f_o:
