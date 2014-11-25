@@ -7,4 +7,4 @@ The scripts which init with vmxxx can be used to operate and manage your vms via
 
 The other part which init with telnetxxx can be use to login vm and execute cmds.
 
-You can read DOC HOWTO for detail info. Any questions, free to contact willcai184@gmail.com, Thanks!
+You can read DOC HOWTO for detail info. Any questions, feel free to contact willcai1984@gmail.com, Thanks!
