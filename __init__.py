@@ -15,6 +15,7 @@ class VMware(object):
             self.connect.ssh_login()
         elif self.connect.mode == 'telnet':
             self.connect.telnet_login()
+        self._data
 
     def __del__(self):
         self.connect.basic_logout()
@@ -119,7 +120,7 @@ class VMware(object):
 
     def unreg_vm(self, folder_path, dis_name):
         # unregister the virtual
-        reg_name=self.dis2reg(dis_name)
+        reg_name = self.dis2reg(dis_name)
         cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name).replace('//', '/')
         self._exec(cli, head='UNREG_VM')
 
@@ -202,12 +203,17 @@ class VMware(object):
 
     def power_on_vm_all(self):
         vmid_list = self._get_all_vmid()
+        
         sort_vmid_list = [int(i) for i in vmid_list].sort()
         for vmid in sort_vmid_list:
             self.power_on_vm_via_vmid(vmid)
 
     def power_off_vm_all(self):
         vmid_list = self._get_all_vmid()
+        self._exec('esxcli vm process list', head='POWEROFF')
+        vm_f = self.connect.child.before
+        vmname_list = re.findall('Display Name: (\S+)', vm_f)
+        #...
         sort_vmid_list = [int(i) for i in vmid_list].sort()
         for vmid in sort_vmid_list:
             self.power_off_vm_via_vmid(vmid)
@@ -236,3 +242,37 @@ class VMware(object):
             info('''[%s]Meet Failed''' % head, self.connect.is_info)
             info('''[%s]BEFORE = %s''' % (head, self.connect.child.before) , self.connect.is_info)
             info('''[%s]AFTER  = %s''' % (head, self.connect.child.after) , self.connect.is_info)
+    # Move to sql later
+    def _data(self):
+        cli1 = "vim-cmd vmsvc/getallvms"
+        self._exec(cli1, head='DATA')
+        f1 = self.connect.child.before
+        '''
+        94     Test_045          [datastore1] Test_045/Test_001.vmx                 otherGuest              vmx-04 
+        '''
+        id_list = re.findall(r'\n(\d+)\s+', f1)
+        dis_list = re.findall(r'\n\d+\s+(\S+)\s+', f1)
+        reg_list = re.findall('\s+(\S+.vmx)\s+', f1)
+
+        self.disname_id_dict = {dis_list(i):id_list(i) for i in range(len(id_list))}
+        self.disname_regname_dict = {dis_list(i):reg_list(i) for i in range(len(id_list))}
+        self.disname_power_dict = {dis_list(i):0 for i in range(len(id_list))}
+        cli2 = "esxcli vm process list"
+        self._exec(cli2, head='DATA')
+        f2 = self.connect.child.before
+        '''
+        
+        NoRekey2_004
+        World ID: 101104
+        Process ID: 0
+        VMX Cartel ID: 101101
+        UUID: 56 4d 7c 63 47 84 18 3e-5b ac e3 30 58 e1 dd 1d
+        Display Name: NoRekey2_004
+        Config File: /vmfs/volumes/52d3c413-092d8c72-5fc2-f01fafe5b986/NoRekey2_004/NoRekey2_001.vmx
+        '''
+        poweron_list = re.findall(r'Display Name: (\S+)', f2)
+        for i in poweron_list:
+            self.disname_power_dict[i] = 1
+        info('''[DATA]Display name and VMID Dict is:''' % str(self.disname_id_dict), self.connect.is_info)
+        info('''[DATA]Display name and Register Dict is:''' % str(self.disname_regname_dict), self.connect.is_info)
+        info('''[DATA]Display name and Power Dict is:''' % str(self.disname_power_dict), self.connect.is_info)
