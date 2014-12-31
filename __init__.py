@@ -269,6 +269,6 @@ class VMware(object):
         poweron_list = re.findall(r'Display Name: (\S+)', f2)
         for i in poweron_list:
             self.disname_power_dict[i] = 1
-        info('''[DATA]Display name and VMID Dict is:''' % str(self.disname_id_dict), self.connect.is_info)
-        info('''[DATA]Display name and Register Dict is:''' % str(self.disname_regname_dict), self.connect.is_info)
-        info('''[DATA]Display name and Power Dict is:''' % str(self.disname_power_dict), self.connect.is_info)
+        info('''[DATA]Display name and VMID Dict is: %s''' % str(self.disname_id_dict), self.connect.is_info)
+        info('''[DATA]Display name and Register Dict is: %s''' % str(self.disname_regname_dict), self.connect.is_info)
+        info('''[DATA]Display name and Power Dict is: %s''' % str(self.disname_power_dict), self.connect.is_info)
