@@ -15,7 +15,7 @@ class VMware(object):
             self.connect.ssh_login()
         elif self.connect.mode == 'telnet':
             self.connect.telnet_login()
-        self._data
+        self._data()
 
     def __del__(self):
         self.connect.basic_logout()
