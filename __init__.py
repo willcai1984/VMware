@@ -111,7 +111,7 @@ class VMware(object):
     
     def del_vm_all(self, folder_path):
         cli = 'cd %s;rm -fr *' % (folder_path)
-        self._exec(cli, head='DEL_VM')
+        self._exec(cli, timeout=1200, head='DEL_VM')
     
     def reg_vm(self, folder_path, reg_name):
         # register the virtual machine as your display name
