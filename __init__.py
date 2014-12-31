@@ -209,13 +209,9 @@ class VMware(object):
             self.power_on_vm_via_vmid(vmid)
 
     def power_off_vm_all(self):
-        vmid_list = self._get_all_vmid()
-        self._exec('esxcli vm process list', head='POWEROFF')
-        vm_f = self.connect.child.before
-        vmname_list = re.findall('Display Name: (\S+)', vm_f)
-        #...
-        sort_vmid_list = [int(i) for i in vmid_list].sort()
-        for vmid in sort_vmid_list:
+        poweroff_dis_list = [dis for dis, power in self.disname_power_dict.items() if power == 1]
+        poweroff_id_list = [self.disname_id_dict[i] for i in poweroff_dis_list].sort()
+        for vmid in poweroff_id_list:
             self.power_off_vm_via_vmid(vmid)
 
     def _exec(self, cli, timeout=60, head=''):
