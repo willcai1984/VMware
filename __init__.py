@@ -209,8 +209,8 @@ class VMware(object):
             self.power_on_vm_via_vmid(vmid)
 
     def power_off_vm_all(self):
-        poweroff_dis_list = [dis for dis, power in self.disname_power_dict.items() if power == 1]
-        poweroff_id_list = [self.disname_id_dict[i] for i in poweroff_dis_list].sort()
+        poweroff_dis_list = sorted([dis for dis, power in self.disname_power_dict.items() if power == 1])
+        poweroff_id_list = [self.disname_id_dict[i] for i in poweroff_dis_list]
         for vmid in poweroff_id_list:
             self.power_off_vm_via_vmid(vmid)
 
