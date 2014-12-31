@@ -17,7 +17,7 @@ def vm_del():
     else:
         for name in name_list:
             vm.power_off_vm_via_vmname(name)
-            vm.unreg_vm(folder_path, name + '/' + name + '.vmx')
+            vm.unreg_vm(folder_path, name)
             vm.del_vm(folder_path, name)
 
 if __name__ == '__main__':

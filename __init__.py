@@ -117,8 +117,9 @@ class VMware(object):
         cli = 'vim-cmd solo/registervm %s' % (folder_path + '/' + reg_name).replace('//', '/')
         self._exec(cli, head='REG_VM')
 
-    def unreg_vm(self, folder_path, reg_name):
+    def unreg_vm(self, folder_path, dis_name):
         # unregister the virtual
+        reg_name=self.dis2reg(self, dis_name)
         cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name).replace('//', '/')
         self._exec(cli, head='UNREG_VM')
 
@@ -148,7 +149,7 @@ class VMware(object):
         cli = 'vim-cmd vmsvc/getallvms'
         self._exec(cli, head='ALL_REG')
         reg_all = self.connect.child.before
-        reg_list = re.findall(r'\n\d+\s+\S+\s+\S+\s+(\S+)\s+', reg_all)
+        reg_list = re.findall('\s+(\S+.vmx)\s+', reg_all)
         return reg_list
 
     def power_on_vm_via_vmid(self, vmid):
@@ -175,6 +176,18 @@ class VMware(object):
             return vmid_list[0]
         else:
             info('''[NAME2ID]Not find the vmname %s in vmname_list, skip''' % vmname, self.connect.is_info)
+            return None
+
+    def dis2reg(self, dis):
+        # should add blank after %s such as "grep '%s ' ", because if we want to search xxx001, will shown all vmid(all file name is the same, such as 'VirtualOS_011/VirtualOS_001.vmx ')
+        cli = "vim-cmd vmsvc/getallvms | grep '%s '" % dis
+        self._exec(cli, head='DIS2REG')
+        reg_f = self.connect.child.before
+        reg_list = re.findall('\s+(\S+.vmx)\s+', reg_f)
+        if len(reg_list) == 1:
+            return reg_list[0]
+        else:
+            info('''[DIS2REG]Not find the display name %s in reg_list, skip''' % dis, self.connect.is_info)
             return None
 
     def power_on_vm_via_vmname(self, vmname):
