@@ -250,9 +250,9 @@ class VMware(object):
         dis_list = re.findall(r'\n\d+\s+(\S+)\s+', f1)
         reg_list = re.findall('\s+(\S+.vmx)\s+', f1)
 
-        self.disname_id_dict = {dis_list(i):id_list(i) for i in range(len(id_list))}
-        self.disname_regname_dict = {dis_list(i):reg_list(i) for i in range(len(id_list))}
-        self.disname_power_dict = {dis_list(i):0 for i in range(len(id_list))}
+        self.disname_id_dict = {dis_list[i]:id_list[i] for i in range(len(id_list))}
+        self.disname_regname_dict = {dis_list[i]:reg_list[i] for i in range(len(id_list))}
+        self.disname_power_dict = {dis_list[i]:0 for i in range(len(id_list))}
         cli2 = "esxcli vm process list"
         self._exec(cli2, head='DATA')
         f2 = self.connect.child.before
