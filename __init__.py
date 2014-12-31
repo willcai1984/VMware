@@ -125,8 +125,8 @@ class VMware(object):
         self._exec(cli, head='UNREG_VM')
 
     def unreg_vm_all(self, folder_path):
-        for reg_name in self.reg_list:
-            self.unreg_vm(folder_path, reg_name)
+        for dis_name in self.dis_list:
+            self.unreg_vm(folder_path, dis_name)
 
     def _is_vmid_exist(self, vmid):
         if str(vmid) in self.id_list:
