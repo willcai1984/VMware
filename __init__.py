@@ -119,7 +119,7 @@ class VMware(object):
 
     def unreg_vm(self, folder_path, dis_name):
         # unregister the virtual
-        reg_name=self.dis2reg(self, dis_name)
+        reg_name=self.dis2reg(dis_name)
         cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name).replace('//', '/')
         self._exec(cli, head='UNREG_VM')
 
