@@ -120,7 +120,7 @@ class VMware(object):
 
     def unreg_vm(self, folder_path, dis_name):
         # unregister the virtual
-        reg_name = self.dis2reg(dis_name)
+        reg_name = self.disname_regname_dict[dis_name]
         cli = 'vim-cmd vmsvc/unregister %s' % (folder_path + '/' + reg_name).replace('//', '/')
         self._exec(cli, head='UNREG_VM')
 
@@ -130,28 +130,10 @@ class VMware(object):
             self.unreg_vm(folder_path, reg_name)
 
     def _is_vmid_exist(self, vmid):
-        cli = 'vim-cmd vmsvc/getallvms'
-        self._exec(cli, head='CHECK_VMID')
-        vmid_all = self.connect.child.before
-        vmid_list = re.findall(r'\n(\d+)', vmid_all)
-        if vmid in vmid_list:
+        if str(vmid) in self.id_list:
             return True
         else:
             return False
-
-    def _get_all_vmid(self):
-        cli = 'vim-cmd vmsvc/getallvms'
-        self._exec(cli, head='ALL_VMID')
-        vmid_all = self.connect.child.before
-        vmid_list = re.findall(r'\n(\d+)', vmid_all)
-        return vmid_list
-
-    def _get_all_reg(self):
-        cli = 'vim-cmd vmsvc/getallvms'
-        self._exec(cli, head='ALL_REG')
-        reg_all = self.connect.child.before
-        reg_list = re.findall('\s+(\S+.vmx)\s+', reg_all)
-        return reg_list
 
     def power_on_vm_via_vmid(self, vmid):
         if self._is_vmid_exist:
@@ -167,45 +149,20 @@ class VMware(object):
         else:
             info('''[POWER_OFF]Not find the vmid %s in vmid_list, skip''' % vmid, self.connect.is_info)
 
-    def vmname2vmid(self, vmname):
-        # should add blank after %s such as "grep '%s ' ", because if we want to search xxx001, will shown all vmid(all file name is the same, such as 'VirtualOS_011/VirtualOS_001.vmx ')
-        cli = "vim-cmd vmsvc/getallvms | grep '%s '" % vmname
-        self._exec(cli, head='NAME2ID')
-        vmid_all = self.connect.child.before
-        vmid_list = re.findall(r'\n(\d+) ', vmid_all)
-        if len(vmid_list) == 1:
-            return vmid_list[0]
-        else:
-            info('''[NAME2ID]Not find the vmname %s in vmname_list, skip''' % vmname, self.connect.is_info)
-            return None
-
-    def dis2reg(self, dis):
-        # should add blank after %s such as "grep '%s ' ", because if we want to search xxx001, will shown all vmid(all file name is the same, such as 'VirtualOS_011/VirtualOS_001.vmx ')
-        cli = "vim-cmd vmsvc/getallvms | grep '%s '" % dis
-        self._exec(cli, head='DIS2REG')
-        reg_f = self.connect.child.before
-        reg_list = re.findall('\s+(\S+.vmx)\s+', reg_f)
-        if len(reg_list) == 1:
-            return reg_list[0]
-        else:
-            info('''[DIS2REG]Not find the display name %s in reg_list, skip''' % dis, self.connect.is_info)
-            return None
-
     def power_on_vm_via_vmname(self, vmname):
-        vmid = self.vmname2vmid(vmname)
+        vmid = self.self.disname_id_dict[vmname]
         if vmid:
             self.power_on_vm_via_vmid(vmid)
 
     def power_off_vm_via_vmname(self, vmname):
-        vmid = self.vmname2vmid(vmname)
+        vmid = self.self.disname_id_dict[vmname]
         if vmid:
             self.power_off_vm_via_vmid(vmid)
 
     def power_on_vm_all(self):
-        vmid_list = self._get_all_vmid()
-        
-        sort_vmid_list = [int(i) for i in vmid_list].sort()
-        for vmid in sort_vmid_list:
+        poweron_dis_list = sorted([dis for dis, power in self.disname_power_dict.items() if power == 0])
+        poweron_id_list = [self.disname_id_dict[i] for i in poweron_dis_list]
+        for vmid in poweron_id_list:
             self.power_on_vm_via_vmid(vmid)
 
     def power_off_vm_all(self):
@@ -246,13 +203,13 @@ class VMware(object):
         '''
         94     Test_045          [datastore1] Test_045/Test_001.vmx                 otherGuest              vmx-04 
         '''
-        id_list = re.findall(r'\n(\d+)\s+', f1)
-        dis_list = re.findall(r'\n\d+\s+(\S+)\s+', f1)
-        reg_list = re.findall('\s+(\S+.vmx)\s+', f1)
+        self.id_list = re.findall(r'\n(\d+)\s+', f1)
+        self.dis_list = re.findall(r'\n\d+\s+(\S+)\s+', f1)
+        self.reg_list = re.findall('\s+(\S+.vmx)\s+', f1)
 
-        self.disname_id_dict = {dis_list[i]:id_list[i] for i in range(len(id_list))}
-        self.disname_regname_dict = {dis_list[i]:reg_list[i] for i in range(len(id_list))}
-        self.disname_power_dict = {dis_list[i]:0 for i in range(len(id_list))}
+        self.disname_id_dict = {self.dis_list[i]:self.id_list[i] for i in range(len(self.id_list))}
+        self.disname_regname_dict = {self.dis_list[i]:self.reg_list[i] for i in range(len(self.id_list))}
+        self.disname_power_dict = {self.dis_list[i]:0 for i in range(len(self.id_list))}
         cli2 = "esxcli vm process list"
         self._exec(cli2, head='DATA')
         f2 = self.connect.child.before
