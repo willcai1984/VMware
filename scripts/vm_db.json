@@ -1,0 +1,6 @@
+{
+"sql":	{"ip":"localhost",
+		"user":"root",
+		"passwd":"aerohive",
+		"interval":"10"}
+}

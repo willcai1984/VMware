@@ -222,8 +222,8 @@ class VMware(object):
         Display Name: NoRekey2_004
         Config File: /vmfs/volumes/52d3c413-092d8c72-5fc2-f01fafe5b986/NoRekey2_004/NoRekey2_001.vmx
         '''
-        poweron_list = re.findall(r'Display Name: (\S+)', f2)
-        for i in poweron_list:
+        self.poweron_list = re.findall(r'Display Name: (\S+)', f2)
+        for i in self.poweron_list:
             self.disname_power_dict[i] = 1
         info('''[DATA]Display name and VMID Dict is: %s''' % str(self.disname_id_dict), self.connect.is_info)
         info('''[DATA]Display name and Register Dict is: %s''' % str(self.disname_regname_dict), self.connect.is_info)
