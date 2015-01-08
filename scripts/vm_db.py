@@ -30,20 +30,20 @@ def vm_db():
 def db_sync(vm, con, cursor, sql_table):
     vm._data()
     cursor.execute("update %s set flag='0'" % sql_table)
-    for i in range(len(vm.connect.id_list)):
-        if vm.connect.dis_list[i] in vm.connect.poweron_list:
+    for i in range(len(vm.id_list)):
+        if vm.dis_list[i] in vm.poweron_list:
             cursor.execute("replace into %s(vmid,display,register,power,flag) values('%s','%s','%s','%s','%s')" % 
                                 (sql_table,
-                                vm.connect.id_list[i],
-                                vm.connect.dis_list[i],
-                                vm.connect.reg_list[i],
+                                vm.id_list[i],
+                                vm.dis_list[i],
+                                vm.reg_list[i],
                                 '1', '1'))
         else:
             cursor.execute("replace into %s(vmid,display,register,power,flag) values('%s','%s','%s','%s','%s')" % 
                                (sql_table,
-                                vm.connect.id_list[i],
-                                vm.connect.dis_list[i],
-                                vm.connect.reg_list[i],
+                                vm.id_list[i],
+                                vm.dis_list[i],
+                                vm.reg_list[i],
                                 '0', '1'))
     con.commit()
 
