@@ -21,8 +21,8 @@ def vm_db():
     power:   0/1 off/on
     flag:    0/1 unactive/active
     '''
-    create_table_cli="create table if not exists %s (vmid char(5) not null primary key,\
-                      display varchar(30),register varchar(30),power char(1),flag char(1))" % sql_table
+    create_table_cli="create table if not exists %s (vmid char(10) not null primary key,\
+                      display varchar(200),register varchar(200),power char(1),flag char(1))" % sql_table
     cursor.execute(create_table_cli)
     db_sync(vm, con, cursor, sql_table)
     cursor.close()

@@ -204,8 +204,8 @@ class VMware(object):
         '''
         self.id_list = re.findall(r'\n(\d+)\s+', f1)
         self.dis_list = re.findall(r'\n\d+\s+(\S+)\s+', f1)
-        self.reg_list = re.findall('\s+(\S+.vmx)\s+', f1)
-
+        #self.reg_list = re.findall('\s+(\S+.vmx)\s+', f1)
+        self.reg_list = re.findall('\n\d+\s+\S+\s+\S+\s+(.*.vmx)\s+', f1)
         self.disname_id_dict = {self.dis_list[i]:self.id_list[i] for i in range(len(self.id_list))}
         self.disname_regname_dict = {self.dis_list[i]:self.reg_list[i] for i in range(len(self.id_list))}
         self.disname_power_dict = {self.dis_list[i]:0 for i in range(len(self.id_list))}
