@@ -1,4 +1,6 @@
 {
 "vm":	{"name":"vm001,vm003-vm005,vm007",
-		"is_all":"false"}
+		"id":"1",
+		"is_all":"false",
+		"is_id":"false"}
 }
