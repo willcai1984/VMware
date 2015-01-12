@@ -149,14 +149,16 @@ class VMware(object):
             info('''[POWER_OFF]Not find the vmid %s in vmid_list, skip''' % vmid, self.connect.is_info)
 
     def power_on_vm_via_vmname(self, vmname):
-        vmid = self.disname_id_dict[vmname]
-        if vmid:
-            self.power_on_vm_via_vmid(vmid)
+        if vmname not in self.poweron_list:
+            vmid = self.disname_id_dict[vmname]
+            if vmid:
+                self.power_on_vm_via_vmid(vmid)
 
     def power_off_vm_via_vmname(self, vmname):
-        vmid = self.disname_id_dict[vmname]
-        if vmid:
-            self.power_off_vm_via_vmid(vmid)
+        if vmname in self.poweron_list:
+            vmid = self.disname_id_dict[vmname]
+            if vmid:
+                self.power_off_vm_via_vmid(vmid)
 
     def power_on_vm_all(self):
         poweron_dis_list = sorted([dis for dis, power in self.disname_power_dict.items() if power == 0])
