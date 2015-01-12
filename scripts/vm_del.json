@@ -1,5 +1,7 @@
 {
 "vm":	{"folder_path":"/vmfs/volumes/datastore1/",
-		"name":"vm003,vm005,vm007-vm009",
-		"is_all":"false"}
+		"name":"vm001,vm003-vm005,vm007",
+		"id":"1",
+		"is_all":"false",
+		"is_id":"false}
 }

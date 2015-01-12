@@ -17,6 +17,7 @@ def vm_del():
     else:
         for name in name_list:
             vm.power_off_vm_via_vmname(name)
+            #disname will transfer to regname in back
             vm.unreg_vm(folder_path, name)
             vm.del_vm(folder_path, name)
 
