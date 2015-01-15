@@ -83,7 +83,8 @@ def str2list(list_str):
     para_reg = re.compile('^\w+')
     ran_reg = re.compile('^\w+-\w+$')
     str_reg = re.compile('\D*')
-    int_reg = re.compile('\d+')
+    #Add $ for the format vm2_001
+    int_reg = re.compile('\d+$')
     # remove not int para and blank
     i_list = [i.replace(' ', '') for i in p_list if para_reg.search(i)]
     str_list = []
