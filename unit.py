@@ -82,9 +82,9 @@ def str2list(list_str):
     p_list = list_str.split(',')
     para_reg = re.compile('^\w+')
     ran_reg = re.compile('^\w+-\w+$')
-    str_reg = re.compile('\D*')
     #Add $ for the format vm2_001
     int_reg = re.compile('\d+$')
+    #str_reg = re.compile('\D*')
     # remove not int para and blank
     i_list = [i.replace(' ', '') for i in p_list if para_reg.search(i)]
     str_list = []
@@ -92,11 +92,13 @@ def str2list(list_str):
         if ran_reg.search(i):
             ran_list = i.split('-')
             ran_start = ran_list[0]
-            str_start = str_reg.search(ran_start).group()
+            #str_start = str_reg.search(ran_start).group()
             int_start = int_reg.search(ran_start).group()
+            str_start = re.sub(int_start, '', ran_start)
             ran_end = ran_list[-1]
-            str_end = str_reg.search(ran_end).group()
+            #str_end = str_reg.search(ran_end).group()
             int_end = int_reg.search(ran_end).group()
+            str_end = re.sub(int_end, '', ran_end)
             for j in range(int(int_start), int(int_end) + 1):
                 para = str(j)
                 if str_start and str_start == str_end:
